@@ -3,6 +3,9 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+const passport = require('passport');
+const User = require('./models/user');
+const session = require('express-session');
 
 const indexRouter = require('./routes/index');
 const postsRouter = require('./routes/posts');
@@ -21,6 +24,17 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Configure Passport and Sessions
+app.use(session({
+  secret: 'hang ten dude!',
+  resave: false,
+  saveUninitialized: true
+}));
+passport.use(User.createStrategy());
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+// Mount routes
 app.use('/', indexRouter);
 app.use('/posts', postsRouter);
 app.use('/posts/:id/reviews', reviewsRouter);
