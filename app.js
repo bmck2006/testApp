@@ -6,13 +6,21 @@ const logger = require('morgan');
 const passport = require('passport');
 const User = require('./models/user');
 const session = require('express-session');
-
+const mongoose = require('mongoose');
 const indexRouter = require('./routes/index');
 const postsRouter = require('./routes/posts');
 const reviewsRouter = require('./routes/reviews');
 const usersRouter = require('./routes/users');
 
 const app = express();
+
+//connect to the database
+mongoose.connect('mongodb://127.0.0.1:27017/testapp', { useNewUrlParser: true});
+const db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function() {
+  console.log('Mongoose DB Connection: We\'re Connected!');
+});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
